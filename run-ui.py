@@ -1,11 +1,12 @@
 import gspread
-from colorama import Fore, Style
+from rich import print
+from rich.prompt import Prompt
 from csvAPI import api
 import time
 import variables as var
 from gspread_formatting import *
 
-userinput = input(f"{Fore.BLUE}Select 1 for Navy Federal Credit Union.{Fore.GREEN}\nSelect 2 for Paypal.{Style.RESET_ALL}\n") # add color
+userinput = Prompt.ask(f"[blue]Select 1 for Navy Federal Credit Union.\n[green]Select 2 for Paypal.\n") 
 
 sa = gspread.service_account()
 sh = sa.open("Personal Finances")
@@ -18,6 +19,7 @@ fmt = cellFormat(
     numberFormat={'type':'CURRENCY'},
     horizontalAlignment='RIGHT'
     )
+    
 
 def linecounter(file):
     with open(file, mode='r') as fp:
@@ -31,13 +33,12 @@ if userinput == "1":
     rows = api.readNFCU()
     for row in rows:
         if lines < linecount:
-            wks.insert_row([row[0], row[1], row[2], row[3]], 7, inherit_from_before=True)
+            wks.insert_row([row[0], row[1], row[2], row[3]], 7)
             time.sleep(2)
             lines += 1
-            print(lines)
-            print('linecount '+ str(linecount))
-    format_cell_range(wks, 'D2:D', fmt)
-    print("Format Succesfull!")
+            print(f'Transaction {lines} imported out of {linecount}')
+    wks.format('D2:D',{"numberFormat": {'type':'CURRENCY'}})
+    print("Formatting Succesfull!")
 
 elif userinput == "2":
     print("Checking Paypal!")
@@ -46,8 +47,12 @@ elif userinput == "2":
     rows = api.readPaypal()
     for row in rows:
         if lines < linecount:
-            wks.insert_row([row[0], row[1], row[2], row[3]], 7, inherit_from_before=True)
+            wks.insert_row([row[0], row[1], row[2], row[3]], 7)
             time.sleep(2)
             lines += 1
+            print(f'Transaction {lines} imported out of {linecount}')
+    wks.format('D2:D',{"numberFormat": {'type':'CURRENCY'}})
+    print("Formatting Succesfull!")gi
+            
 else:
-    print("Invalid input!")
+    print("[red]Invalid input!")
