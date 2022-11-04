@@ -15,12 +15,6 @@ wks = sh.worksheet('raw')
 rows = []
 lines = 0 
 
-fmt = cellFormat(
-    numberFormat={'type':'CURRENCY'},
-    horizontalAlignment='RIGHT'
-    )
-    
-
 def linecounter(file):
     with open(file, mode='r') as fp:
         linecount = len(fp.readlines())
@@ -52,7 +46,7 @@ elif userinput == "2":
             lines += 1
             print(f'Transaction {lines} imported out of {linecount}')
     wks.format('D2:D',{"numberFormat": {'type':'CURRENCY'}})
-    print("Formatting Succesfull!")gi
+    print("Formatting Succesfull!")
             
 else:
     print("[red]Invalid input!")
